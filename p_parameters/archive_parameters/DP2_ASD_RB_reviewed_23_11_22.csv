@@ -1,0 +1,46 @@
+event_definition;coding_system;code;code_name;concept;concept_name;tags;system;event_abbreviation;type;RB Comments
+Child outcome: autism;ICD10;F84.8;Other pervasive developmental disorders;C0349331;Other pervasive developmental disorders;Narrow;R;ASD;OUT;often used for atypical ASD presentation
+Child outcome: autism;ICD10;F84.5;Asperger's syndrome;C0236792;Asperger Syndrome;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10;F84.1;Atypical autism;C0338986;Atypical autism;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10;F84.0;Childhood autism;C0004352;Autistic Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10;F84;Pervasive developmental disorders;C0524528;Pervasive Development Disorder;Narrow;R;ASD;OUT;often used for atypical ASD presentation
+Child outcome: autism;ICD10;F84.0;Childhood autism;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10;F84.1;Atypical autism;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10;F84.5;Asperger's syndrome;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10;F84.8;Other pervasive developmental disorders;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10;F84.9;Pervasive developmental disorder, unspecified;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84.8;Other pervasive developmental disorders;C0349331;Other pervasive developmental disorders;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84.5;Asperger's syndrome;C0236792;Asperger Syndrome;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84.9;Atypical autism;C0338986;Atypical autism;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84.0;Autistic disorder;C0004352;Autistic Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84;Pervasive developmental disorders;C0524528;Pervasive Development Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84.0;Autistic disorder;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84.5;Asperger's syndrome;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84.8;Other pervasive developmental disorders;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD10CM;F84.9;Pervasive developmental disorder, unspecified;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.81;Other specified pervasive developmental disorders, residual state;C0154452;Other specified pervasive developmental disorders, residual state;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.80;Other specified pervasive developmental disorders, current or active state;C0154451;Other specified pervasive developmental disorders, current or active state;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.0;Autistic disorder;C0004352;Autistic Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.00;Autistic disorder, current or active state;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.01;Autistic disorder, residual state;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299;Pervasive developmental disorders;C0524528;Pervasive Development Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.0;Autistic disorder;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.00;Autistic disorder, current or active state;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.01;Autistic disorder, residual state;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.8;Other specified pervasive developmental disorders;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.80;Other specified pervasive developmental disorders, current or active state;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.81;Other specified pervasive developmental disorders, residual state;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.9;Unspecified pervasive developmental disorder;;;Narrow;R;ASD;OUT;Likely to be broad and will include some ASD but also so other children with global difficulties. 
+Child outcome: autism;ICD9CM;299.90;Unspecified pervasive developmental disorder, current or active state;;;Narrow;R;ASD;OUT;
+Child outcome: autism;ICD9CM;299.91;Unspecified pervasive developmental disorder, residual state;;;Narrow;R;ASD;OUT;As above
+Child outcome: autism;RCD2;Eu84y;[X]Oth pervasive develop dis;C0349331;Other pervasive developmental disorders;Narrow;R;ASD;OUT;
+Child outcome: autism;RCD2;Eu845;[X]Asperger's syndrome;C0236792;Asperger Syndrome;Narrow;R;ASD;OUT;
+Child outcome: autism;RCD2;Eu841;[X]Atypical autism;C0338986;Atypical autism;Narrow;R;ASD;OUT;
+Child outcome: autism;RCD2;E140.;Infantile autism;C0004352;Autistic Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;RCD2;E140z;Infantile autism NOS;C0004352;Autistic Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;RCD2;Eu84z;[X]Pervasve develop dis unsp;C0524528;Pervasive Development Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;RCD2;E1401;Infantile autism - residual;C0338984;Residual infantile autism;Narrow;R;ASD;OUT;
+Child outcome: autism;RCD2;E1400;Infantile autism - active;C0338985;Active infantile autism;Narrow;R;ASD;OUT;
+Child outcome: autism;ICPC2P;P99010;Aspergers syndrome;C0236792;Asperger Syndrome;Narrow;R;ASD;OUT;
+Child outcome: autism;ICPC2P;P99005;Autism;C0004352;Autistic Disorder;Narrow;R;ASD;OUT;
+Child outcome: autism;ICPC2P;P99006;"Autism;child";C0004352;Autistic Disorder;Narrow;R;ASD;OUT;
