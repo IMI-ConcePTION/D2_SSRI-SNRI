@@ -7,6 +7,8 @@
 print('CREATE EXCLUSION CRITERIA FOR STUDY POPULATION')
 
 smart_load("D3_PERSONS", dirtemp)
+load(paste0(dirpregnancyinput,"D3_pregnancy_final.RData"))
+PERSON_RELATIONSHIP<-fread(paste0(dirinput,"PERSON_RELATIONSHIPS.csv"))
 
 ### Create the criteria based on D3_PERSONS. They are the same for adults and children populations.
 # Remove persons with sex or birth day missing (recoded to year 9999)
@@ -19,8 +21,19 @@ D3_sel_cri[, partial_date_of_death := fifelse(!is.na(death_date) & year(death_da
 # Remove persons with absurd date of birth
 D3_sel_cri[, birth_date_absurd := fifelse(year(birth_date) < 1900 & birth_date > instance_creation, 1, 0)]
 
+# Remove  no children 
+D3_sel_cri[, not_children := fifelse(age_fast(birth_date,study_end) < 18 , 1, 0)] ()
+
+# Remove children not_linked_to_person_relationship (mother is in related_id)
+D3_sel_cri_1<-merge(D3_sel_cri,PERSON_RELATIONSHIP, by="person_id", all.x = T)
+D3_sel_cri[, not_linked_to_person_relationship := fifelse(year(birth_date) < 1900 & birth_date > instance_creation, 1, 0)]
+
+# Remove children pregnancy_not_in_D3_cohort
+D3_sel_cri[, pregnancy_not_in_D3_cohort := fifelse(is.na(related_id), 1, 0)]
+
 # Clean dataset
-D3_sel_cri <- D3_sel_cri[, .(person_id, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd)]
+D3_sel_cri <- D3_sel_cri[, .(person_id, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd,
+                             not_children, not_linked_to_person_relationship,pregnancy_not_in_D3_cohort)]
 
 smart_load("D3_clean_spells", dirtemp)
 
