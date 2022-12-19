@@ -33,7 +33,7 @@ dirpregnancyinput <- paste0(thisdir,"/i_simulated_data_instance/pregnancy/")
 source(paste0(thisdir,"/p_parameters/01_parameters_program.R")) #GENERAL
 source(paste0(thisdir,"/p_parameters/02_parameters_CDM.R")) #CDM
 source(paste0(thisdir,"/p_parameters/03_concept_sets.R")) #CONCEPTSETS
-#source(paste0(thisdir,"/p_parameters/04_itemsets.R")) #ITEMSETS
+source(paste0(thisdir,"/p_parameters/04_itemsets.R")) #ITEMSETS
 source(paste0(thisdir,"/p_parameters/05_variable_lists.R")) #OUTCOMES AND COVARIATES
 source(paste0(thisdir,"/p_parameters/06_algorithms.R")) #ALGORITHMS
 source(paste0(thisdir,"/p_parameters/07_study_design.R")) #STUDY DESIGN
