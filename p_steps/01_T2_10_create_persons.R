@@ -7,19 +7,8 @@
 print('PRE-PROCESSING OF PERSONS')
 
 # import input datasets
-PERSONS <- data.table()
-for (file in files_ConcePTION_CDM_tables[["PERSONS"]]) {
-  temp <- fread(paste0(dirinput, file, ".csv"), colClasses = list(character = "person_id"))
-  PERSONS <- rbind(PERSONS, temp, fill = T)
-  rm(temp)
-}
-
-OBSERVATION_PERIODS <- data.table()
-for (file in files_ConcePTION_CDM_tables[["OBSERVATION_PERIODS"]]) {
-  temp <- fread(paste0(dirinput, file, ".csv"), colClasses = list(character = "person_id"))
-  OBSERVATION_PERIODS <- rbind(OBSERVATION_PERIODS, temp, fill = T)
-  rm(temp)
-}
+PERSONS <- read_CDM_tables("PERSONS")
+OBSERVATION_PERIODS <- read_CDM_tables("OBSERVATION_PERIODS")
 
 OBSERVATION_PERIODS <- OBSERVATION_PERIODS[,`:=`(op_start_date = lubridate::ymd(op_start_date),
                                                  op_end_date = lubridate::ymd(op_end_date))]
@@ -143,10 +132,10 @@ for (i in names(D3_PERSONS)[names(D3_PERSONS) != "death_date"]){
 
 # Create and save D3_events_DEATH
 D3_events_DEATH <- D3_PERSONS[!is.na(death_date),.(person_id, death_date)][, date := death_date][, -"death_date"]
-save(D3_events_DEATH,file = paste0(dirtemp,"D3_events_DEATH.RData"))
+smart_save(D3_events_DEATH, dirtemp)
 rm(D3_events_DEATH)
 
 # Save D3_PERSONS
-save(D3_PERSONS,file = paste0(dirtemp,"D3_PERSONS.RData"))
+smart_save(D3_PERSONS, dirtemp)
 
 rm(D3_PERSONS, OBSERVATION_PERIODS)

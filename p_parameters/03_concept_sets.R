@@ -53,16 +53,17 @@ concept_set_codes_our_study <- lapply(concept_set_codes_our_study, sapply, unlis
 # concept_set_codes_our_study_excl[["EPILEPSY_DRUGS"]][["ATC"]] <- c("N03AX16", "N03AX12","N03AF01")
 # concept_set_codes_our_study_excl[["GAD"]][["ATC"]] <- c("N06AA", "N06AX") #N06AX21
 
-
+## to do when ATC are included
 concept_set_domains<- vector(mode="list")
 for (concept in names(concept_set_codes_our_study)) {
-  if (!grepl("DRUGS", concept) & concept!="GABAPENTIN" & concept!="PREGABALIN") {
+  #if (!grepl("DRUGS", concept) & concept!="GABAPENTIN" & concept!="PREGABALIN") {
     concept_set_domains[[concept]] = "Diagnosis"
-  }else{
-    concept_set_domains[[concept]] = "Medicines"
-  }
+  #}else{
+    #concept_set_domains[[concept]] = "Medicines"
+  #}
 }
 
 
-rm(concept)
-rm(OUT_codelist)
+
+#rm(concept)
+rm(ADHD_codelist,ASD_codelist,ID_codelist)
