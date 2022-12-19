@@ -32,30 +32,14 @@ dirpregnancyinput <- paste0(thisdir,"/i_simulated_data_instance/pregnancy/")
 #LOAD PARAMTETERS
 #----------------
 
-# general parameters of the script
-source(paste0(thisdir,"/p_parameters/01_parameters_program.R"))
-
-# parameters of the CDM
-source(paste0(thisdir,"/p_parameters/02_parameters_CDM.R"))
-
-# concept sets
-source(paste0(thisdir,"/p_parameters/03_concept_sets.R"))
-
-# item sets
-source(paste0(thisdir,"/p_parameters/04_itemsets.R"))
-
-# subpopulations (not to be used in DPs)
-source(paste0(thisdir,"/p_parameters/05_subpopulations_restricting_meanings.R"))
-
-#create outcomes and covariate list of strings
-source(paste0(thisdir,"/p_parameters/06_variable_lists.R"))
-
-# parameters for algortihms
-source(paste0(thisdir,"/p_parameters/07_algorithms.R"))
-
-# parameters for study_design
-source(paste0(thisdir,"/p_parameters/08_study_design.R"))
-
+source(paste0(thisdir,"/p_parameters/01_parameters_program.R")) # general parameters of the script
+source(paste0(thisdir,"/p_parameters/02_parameters_CDM.R"))     # parameters of the CDM
+source(paste0(thisdir,"/p_parameters/03_concept_sets.R"))       # concept sets
+source(paste0(thisdir,"/p_parameters/04_itemsets.R"))           # item sets
+source(paste0(thisdir,"/p_parameters/05_subpopulations_restricting_meanings.R")) # subpopulations (not to be used in DPs)
+source(paste0(thisdir,"/p_parameters/06_variable_lists.R"))     #create outcomes and covariate list of strings
+source(paste0(thisdir,"/p_parameters/07_algorithms.R"))         # parameters for algortihms
+source(paste0(thisdir,"/p_parameters/08_study_design.R"))       # parameters for study_design
 source(paste0(thisdir,"/p_parameters/99_saving_all_parameters.R"))
 
 
