@@ -19,7 +19,7 @@
 
 # input: the VAC4EU spreadsheets, restricted to the conceptsets associated with this study
 
-ADHD_codelist <- fread(paste0(thisdir,"/p_parameters/archive_parameters/DP2_ADHD_RB_reviewed_23_11_22.csv"), header=T)
+ADHD_codelist <- fread(paste0(thisdir,"/p_parameters/archive_parameters/DP2_ADHD_RB_reviewed_19-12_22.csv"), header=T)
 ADHD_codelist <- ADHD_codelist[, .(coding_system, code, event_abbreviation)]
 #ADHD_codelist <- ADHD_codelist[type != "PrA"]
 ADHD_codelist <- ADHD_codelist[code != "", ][, event_abbreviation := toupper(event_abbreviation)]
@@ -56,11 +56,11 @@ concept_set_codes_our_study <- lapply(concept_set_codes_our_study, sapply, unlis
 ## to do when ATC are included
 concept_set_domains<- vector(mode="list")
 for (concept in names(concept_set_codes_our_study)) {
-  #if (!grepl("DRUGS", concept) & concept!="GABAPENTIN" & concept!="PREGABALIN") {
+  if (!grepl("drugs", concept)) {
     concept_set_domains[[concept]] = "Diagnosis"
-  #}else{
-    #concept_set_domains[[concept]] = "Medicines"
-  #}
+  }else{
+    concept_set_domains[[concept]] = "Medicines"
+  }
 }
 
 
