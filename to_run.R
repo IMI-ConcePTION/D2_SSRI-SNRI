@@ -29,6 +29,7 @@ dirpregnancyinput <- paste0(thisdir,"/i_simulated_data_instance/pregnancy/")
 #LOAD PARAMTETERS
 #----------------
 
+
 source(paste0(thisdir,"/p_parameters/01_parameters_program.R")) #GENERAL
 source(paste0(thisdir,"/p_parameters/02_parameters_CDM.R")) #CDM
 source(paste0(thisdir,"/p_parameters/03_concept_sets.R")) #CONCEPTSETS
@@ -37,6 +38,7 @@ source(paste0(thisdir,"/p_parameters/05_variable_lists.R")) #OUTCOMES AND COVARI
 source(paste0(thisdir,"/p_parameters/06_algorithms.R")) #ALGORITHMS
 source(paste0(thisdir,"/p_parameters/07_study_design.R")) #STUDY DESIGN
 source(paste0(thisdir,"/p_parameters/99_saving_all_parameters.R")) #SAVING AND CLEANING PARAMETERS
+
 
 #----------------
 # RUN STEPS
