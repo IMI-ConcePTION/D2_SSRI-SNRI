@@ -56,7 +56,7 @@ concept_set_codes_our_study <- lapply(concept_set_codes_our_study, sapply, unlis
 ## to do when ATC are included
 concept_set_domains<- vector(mode="list")
 for (concept in names(concept_set_codes_our_study)) {
-  if (!grepl("drugs", concept)) {
+  if (!grepl("DRUGS", concept)) {
     concept_set_domains[[concept]] = "Diagnosis"
   }else{
     concept_set_domains[[concept]] = "Medicines"

@@ -22,23 +22,28 @@ D3_sel_cri[, partial_date_of_death := fifelse(!is.na(death_date) & year(death_da
 # Remove persons with absurd date of birth
 D3_sel_cri[, birth_date_absurd := fifelse(year(birth_date) < 1900 & birth_date > instance_creation, 1, 0)]
 
+#exclusion criterion for persons aged more 18y at the beginning of study period
+D3_sel_cri[, age := age_fast(birth_date,recommended_start_date)]
+D3_sel_cri[, not_children := fifelse(age>=18 , 1, 0)]
+
+
 # Remove children not_linked_to_person_relationship (mother is in related_id)
-D3_sel_cri_1<-merge(D3_sel_cri,PERSON_RELATIONSHIP, by="person_id", all.x = T)
-D3_sel_cri_1[, not_linked_to_person_relationship := fifelse(is.na(related_id), 1, 0)]
+D3_sel_cri<-merge(D3_sel_cri,PERSON_RELATIONSHIP[,.(person_id,related_id)], by="person_id", all.x = T)
+D3_sel_cri[, not_linked_to_person_relationship := fifelse(is.na(related_id), 1, 0)]
 
 # Remove children pregnancy_not_in_D3_cohort or not LB
-D3_sel_cri_2<-merge(D3_sel_cri_1,D3_survey_and_visit_ids, by="person_id", all.x = T)
-D3_sel_cri[, pregnancy_not_in_D3_cohort := fifelse(is.na(related_id), 1, 0)] # to be adapted
+D3_sel_cri<-merge(D3_sel_cri,D3_pregnancy_final[,.(person_id,pregnancy_id)], by.y="person_id",by.x="related_id", all.x = T)
+D3_sel_cri[, pregnancy_not_in_D3_cohort := fifelse(is.na(pregnancy_id), 1, 0)] # to be adapted
 
 # Clean dataset
-D3_sel_cri <- D3_sel_cri[, .(person_id, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd,
-                             not_children, not_linked_to_person_relationship,pregnancy_not_in_D3_cohort)]
+D3_sel_cri <- unique(D3_sel_cri[, .(person_id, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd,
+                             not_children, not_linked_to_person_relationship,pregnancy_not_in_D3_cohort)])
 
 smart_load("D3_clean_spells", dirtemp)
 
-D3_clean_spells <- D3_clean_spells[, .(person_id, entry_spell_category, exit_spell_category, starts_after_ending,
-                                       no_overlap_study_period, less_than_x_days_and_not_starts_at_birth,
-                                       is_the_study_spell)]
+D3_clean_spells <- unique(D3_clean_spells[, .(person_id, entry_spell_category, exit_spell_category, starts_after_ending,
+                                       no_overlap_study_period,
+                                       is_the_study_spell)])
 
 # Creation of no_spells criteria
 D3_sel_cri <- D3_sel_cri[, no_spells := fifelse(person_id %in% unlist(unique(D3_clean_spells[, .(person_id)])), 0, 1)]
@@ -88,7 +93,7 @@ D3_clean_spells <- D3_clean_spells[, lapply(.SD, max), by = person_id]
 
 # Add spells exclusion criteria to the one for person. Keep only persons which have a spell
 D3_sel_cri_spells <- merge(D3_sel_cri_temp, D3_clean_spells,
-                           all.y = T, by = "person_id")
+                           all.x = T, by = "person_id")
 
 # ### Create the criteria based on D3_vaccines_curated
 # # Import doses dataset and create doses criteria
@@ -110,9 +115,11 @@ D3_sel_cri_spells <- merge(D3_sel_cri_temp, D3_clean_spells,
 # spells_vaccines <- unique(spells_vaccines)
 # 
 # D3_sel_cri_spells_vaccines <- merge(D3_sel_cri_spells, spells_vaccines, all = T, by = "person_id")
-D3_sel_cri_spells[, study_entry_date := pmax(entry_spell_category, start_lookback)]
+#D3_sel_cri_spells[, study_entry_date := pmax(entry_spell_category, start_lookback)]
+D3_sel_cri_spells[, study_entry_date := pmax(entry_spell_category)]
 D3_sel_cri_spells[, study_exit_date := pmin(exit_spell_category, study_end)]
 D3_sel_cri_spells[, c("entry_spell_category", "exit_spell_category") := NULL]
 
+D3_sel_cri_spells<-unique(D3_sel_cri_spells)
 # Saving exclusion criteria for populations
 smart_save(D3_sel_cri_spells, dirtemp, override_name = "D3_selection_criteria_from_PERSONS_to_study_population")

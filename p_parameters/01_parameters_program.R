@@ -15,7 +15,6 @@ datasources <- c("TEST","ARS","BIPS","BIFAP","FISABIO","SIDIAP","PEDIANET","PHAR
 # dirbase <- getwd()
 # dirinput <- paste0(dirbase,"/CDMInstances/CVM2205_EFFICACY_CHILDREN/")
 
-dirinput <- paste0(thisdir,"/i_simulated_data_instance/")
 
 set_and_create_dir <- function(x) {
   x <- paste0(thisdir, x)
@@ -59,7 +58,7 @@ rm(read_library, new.packages, list.of.packages)
 
 source(paste0(dirmacro,"CreateConceptSetDatasets_v21.R"))
 source(paste0(dirmacro,"CreateItemsetDatasets.R"))
-source(paste0(dirmacro,"MergeFilterAndCollapse_v5.R"))
+source(paste0(dirmacro,"MergeFilterAndCollapse_v6.R"))
 source(paste0(dirmacro,"CreateSpells_v15.R"))
 source(paste0(dirmacro,"CreateFlowChart.R"))
 source(paste0(dirmacro,"ApplyComponentStrategy_v13_2.R"))

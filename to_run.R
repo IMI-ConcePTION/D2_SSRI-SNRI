@@ -20,10 +20,10 @@ thisdir <- setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 #-------------------------------
 # @DAP: please modify the following parameter
 # dirinput: set it to the directory where your CDM instance is stored
-dirinput <- paste0(thisdir,"/i_simulated_data_instance/")
+dirinput <- "/home/rosgin/FEPI/ConcePTION/CDMInstances/PASS_COVIDVACCINES2205/"
 
 # dirpregnancyinput: set it to the directory where your CDM instance is stored
-dirpregnancyinput <- paste0(thisdir,"/i_simulated_data_instance/pregnancy/")
+dirpregnancyinput <- "/home/rosgin/FEPI/ConcePTION/StudyScripts/pregnancy_20221205_3.1/g_output/"
 
 #----------------
 #LOAD PARAMTETERS
@@ -55,12 +55,6 @@ launch_step("p_steps/01_T2_20_apply_CreateSpells.R")
 # APPLY THE FUNCTION CreateConceptSetDatasets TO CREATE ONE DATASET PER CONCEPT SET CONTAINING ONLY RECORDS WITH CODES OF INTEREST
 launch_step("p_steps/01_T2_31_CreateConceptSetDatasets.R")
 
-# RETRIEVE ITEMSET DATASETS
-launch_step("p_steps/01_T2_32_CreateItemSetDatasets.R")
-
-# RETRIEVE PROMPT DATASETS
-launch_step("p_steps/01_T2_33_CreatePromptSetDatasets.R")
-
 # CLEAN THE SPELLS
 launch_step("p_steps/01_T2_40_clean_spells.R")
 
@@ -69,9 +63,9 @@ launch_step("p_steps/01_T2_50_selection_criteria_from_PERSON_to_study_population
 
 launch_step("p_steps/02_T3_10_create_study_population.R")
 
-#will run after the definition of algorithms and variables 
+#definition of baseline information and algorithms and variables 
 
-# launch_step("p_steps/03_T2_10_create_D3_outcomes_simple_algorithm.R")
-# launch_step("p_steps/03_T2_11_create_D3_outcomes_complex_algorithm.R")
-# launch_step("p_steps/03_T2_12_create_D3_event_outcomes_ALL.R")
-# launch_step("p_steps/03_T2_40_create_study_population_main_variables.R")
+launch_step("p_steps/03_T2_baseline_information.R")
+
+launch_step("p_steps/03_T2_algorithms.R")
+
