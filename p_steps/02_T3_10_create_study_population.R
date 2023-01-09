@@ -12,11 +12,11 @@ print('FLOWCHART')
 smart_load("D3_selection_criteria_from_PERSONS_to_study_population", dirtemp)
 selection_criteria <- get("D3_selection_criteria_from_PERSONS_to_study_population")
 
+
 selected_population <- CreateFlowChart(
   dataset = selection_criteria,
-  listcriteria = c("sex_or_birth_date_is_not_defined", "birth_date_absurd", "partial_date_of_death", "no_spells",
-                   "all_spells_start_after_ending", "no_spell_overlapping_the_study_period",
-                   "no_spell_longer_than_x_days"),
+  listcriteria = c("sex_or_birth_date_is_not_defined", "birth_date_absurd", "partial_date_of_death","not_children", "not_linked_to_person_relationship","pregnancy_not_in_D3_cohort", "no_spells",
+                   "all_spells_start_after_ending", "no_spell_overlapping_the_study_period"),
   flowchartname = "Flowchart_exclusion_criteria")
 
 fwrite(get("Flowchart_exclusion_criteria"),
