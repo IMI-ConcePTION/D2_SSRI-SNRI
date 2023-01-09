@@ -2,6 +2,8 @@
 #' 'MergeFilterAndCollapse'
 #' 
 #'
+#' version 6: addition of the summary statistics "third"
+#' 
 #'The function MergeFilterAndCollapse performs the merge between a dataset with one row per unit of observation and a dataset with multiple rows while filtering by a condition. Furthermore it is possibile to collapse and compute summary statistics across strata of a categorical variable.
 #'
 #' @param listdatasetL a list of one or more data.table() datasets, containing multiple records per -key-. In case the list contains more than one dataset, make sure the names of the -key- variables are equal across datasets.
