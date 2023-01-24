@@ -42,8 +42,8 @@ Child outcome: learning difficulties or disorders of intellectual development;IC
 Child outcome: learning difficulties or disorders of intellectual development;ICD10CM;F71;Moderate intellectual disabilities;C0026351;Moderate intellectual disability;Narrow;R;ID;OUT;
 Child outcome: learning difficulties or disorders of intellectual development;ICD10CM;F70;Mild intellectual disabilities;C0026106;Mild Mental Retardation;Narrow;R;ID;OUT;
 Child outcome: learning difficulties or disorders of intellectual development;ICD10CM;F81.9;Learning disability NOS;C0751265;Learning Disabilities;Narrow;R;ID;OUT;Include
-Child outcome: learning difficulties or disorders of intellectual development;ICPC2P;P85001;"Deficiency;mental";C0025362;Mental Retardation;Narrow;R;ID;OUT;
-Child outcome: learning difficulties or disorders of intellectual development;ICPC2P;P85003;"Retardation;mental";C0025362;Mental Retardation;Narrow;R;ID;OUT;
+Child outcome: learning difficulties or disorders of intellectual development;ICPC2;P85001;"Deficiency;mental";C0025362;Mental Retardation;Narrow;R;ID;OUT;
+Child outcome: learning difficulties or disorders of intellectual development;ICPC2;P85003;"Retardation;mental";C0025362;Mental Retardation;Narrow;R;ID;OUT;
 Child outcome: learning difficulties or disorders of intellectual development;RCD2;E3...;Mental retardation;C0025362;Mental Retardation;Narrow;R;ID;OUT;
 Child outcome: learning difficulties or disorders of intellectual development;RCD2;E3z..;Mental retardation NOS;C0025362;Mental Retardation;Narrow;R;ID;OUT;
 Child outcome: learning difficulties or disorders of intellectual development;RCD2;Eu7zz;[X]Unsp retard no mention beh;C0349321;Unspecified mental retardation without mention of impairment of behavior;Narrow;R;ID;OUT;
