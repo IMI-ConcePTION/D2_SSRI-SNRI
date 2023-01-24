@@ -3,8 +3,10 @@
 #-----------------------------------
 
 #study_years_datasource
+end_date <- vector(mode = "list")
+end_date[['ARS']] <- ymd(20191231)
 
-study_end <- min(instance_creation, recommended_end_date, na.rm = T)
+study_end <- min(instance_creation, recommended_end_date,end_date[[thisdatasource]], na.rm = T)
 rm(recommended_end_date)
 
 
@@ -23,14 +25,21 @@ gap_days <- ifelse(thisdatasource %not in% names(admissible_gap_obs_periods),
 min_spell_lenght <- 28
 
 # define from when the data is valid
-recommended_start_date_vect <- vector(mode = "list")
-recommended_start_date_vect[['ARS']] <- ymd(20030101)
-recommended_start_date_vect[['TEST']] <- ymd(20030101)
-recommended_start_date_vect[['SAIL']] <- ymd(20050101)
+recommended_start_date <- vector(mode = "list")
+recommended_start_date[['ARS']] <- ymd(20030101)
+recommended_start_date[['TEST']] <- ymd(20030101)
+recommended_start_date[['SAIL']] <- ymd(20050101)
+recommended_start_date[['THL']] <- ymd(19960101)
+recommended_start_date[['EFEMERIS']] <- ymd(20040101)
+recommended_start_date[['POMME']] <- ymd(20100101)
+recommended_start_date[['ER']] <- ymd(20100101)
+recommended_start_date[['UOSL']] <- ymd(20050101)
 
-recommended_start_date <- fifelse(thisdatasource %not in% names(recommended_start_date_vect),
-                                  ymd(19000101), recommended_start_date_vect[[thisdatasource]])
-rm(recommended_start_date_vect)
 
 
-study_start <- recommended_start_date
+# recommended_start_date <- fifelse(thisdatasource %not in% names(recommended_start_date_vect),
+#                                   ymd(19960101), recommended_start_date_vect[[thisdatasource]])
+#rm(recommended_start_date_vect)
+
+
+study_start <- recommended_start_date[[thisdatasource]]

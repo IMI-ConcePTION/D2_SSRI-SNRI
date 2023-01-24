@@ -18,7 +18,7 @@ person_spell[, entry_spell_category := data.table::fifelse(birth_date < entry_sp
                                                            birth_date)]
 
 #censore the exit date at the 18th birth day
-person_spell[, exit_spell_category := pmin(exit_spell_category_crude, death_date, birth_date+years(18)-1, na.rm = T)]
+person_spell[, exit_spell_category := pmin(exit_spell_category_crude, death_date, birth_date+floor(18*365.25)-1, na.rm = T)]
 
 # Create variable which says if the start/end of spell has been changed
 person_spell[, op_start_date_cleaned := data.table::fifelse(entry_spell_category != entry_spell_category_crude, 0, 1)]
@@ -33,15 +33,17 @@ person_spell[, no_overlap_study_period := fifelse(
   entry_spell_category > study_end | exit_spell_category < study_start, 1, 0)]
 
 # find spells that are shorter than x days
-person_spell[, less_than_x_days_and_not_starts_at_birth := fifelse(
-  correct_difftime(pmin(exit_spell_category, study_end), entry_spell_category) <= min_spell_lenght & starts_at_birth == 0, 1, 0)]
+person_spell[, less_than_x_days_or_not_starts_at_birth := fifelse(
+  correct_difftime(pmin(exit_spell_category, study_end), entry_spell_category) <= min_spell_lenght | starts_at_birth == 0, 1, 0)]
+
+#min_spell_lenght does not make sense for EFEMERIS
 
 
 
 #add additional criteria specific for the study (for example keep only the first spell for vaccinated)
 
 
-person_spell[starts_after_ending == 0 & no_overlap_study_period == 0 & less_than_x_days_and_not_starts_at_birth & starts_at_birth == 1 ,
+person_spell[starts_after_ending == 0 & no_overlap_study_period == 0 & less_than_x_days_or_not_starts_at_birth ==0  ,
              is_the_study_spell := 1] #flag:=0
 
 

@@ -17,14 +17,18 @@ if (!require("rstudioapi")) install.packages("rstudioapi")
 thisdir <- setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 thisdir <- setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 
-#-------------------------------
+# #-------------------------------
+# # @DAP: please modify the following parameter
+# # dirinput: set it to the directory where your CDM instance is stored
+# dirinput <- "/home/rosgin/FEPI/ConcePTION/CDMInstances/PASS_COVIDVACCINES2205/"
+# 
+# # dirpregnancyinput: set it to the directory where your CDM instance is stored
+# dirpregnancyinput <- "/home/rosgin/FEPI/ConcePTION/StudyScripts/pregnancy_20221205_3.1/g_output/"
 # @DAP: please modify the following parameter
 # dirinput: set it to the directory where your CDM instance is stored
-dirinput <- "/home/rosgin/FEPI/ConcePTION/CDMInstances/PASS_COVIDVACCINES2205/"
-
+dirinput <- paste0(thisdir,"/i_simulated_data_instance/")
 # dirpregnancyinput: set it to the directory where your CDM instance is stored
-dirpregnancyinput <- "/home/rosgin/FEPI/ConcePTION/StudyScripts/pregnancy_20221205_3.1/g_output/"
-
+dirpregnancyinput <- paste0(thisdir,"/i_simulated_data_instance/pregnancy/")
 #----------------
 #LOAD PARAMTETERS
 #----------------

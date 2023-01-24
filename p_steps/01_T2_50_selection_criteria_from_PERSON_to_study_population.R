@@ -23,8 +23,11 @@ D3_sel_cri[, partial_date_of_death := fifelse(!is.na(death_date) & year(death_da
 D3_sel_cri[, birth_date_absurd := fifelse(year(birth_date) < 1900 & birth_date > instance_creation, 1, 0)]
 
 #exclusion criterion for persons aged more 18y at the beginning of study period
-D3_sel_cri[, age := age_fast(birth_date,recommended_start_date)]
+D3_sel_cri[, age := age_fast(birth_date,study_start)]
 D3_sel_cri[, not_children := fifelse(age>=18 , 1, 0)]
+
+# D3_sel_cri[, age_study_end := difftime(birth_date,study_end,units = "days")]
+# D3_sel_cri[, too_young_at_study_end := fifelse(age_study_end<=180 & age_study_end>=0, 1, 0)]
 
 
 # Remove children not_linked_to_person_relationship (mother is in related_id)
@@ -32,8 +35,8 @@ D3_sel_cri<-merge(D3_sel_cri,PERSON_RELATIONSHIP[,.(person_id,related_id)], by="
 D3_sel_cri[, not_linked_to_person_relationship := fifelse(is.na(related_id), 1, 0)]
 
 # Remove children pregnancy_not_in_D3_cohort or not LB
-D3_sel_cri<-merge(D3_sel_cri,D3_pregnancy_final[,.(person_id,pregnancy_id)], by.y="person_id",by.x="related_id", all.x = T)
-D3_sel_cri[, pregnancy_not_in_D3_cohort := fifelse(is.na(pregnancy_id), 1, 0)] # to be adapted
+D3_sel_cri<-merge(D3_sel_cri,D3_pregnancy_final[,.(person_id,pregnancy_id,type_of_pregnancy_end)], by.y="person_id",by.x="related_id", all.x = T)
+D3_sel_cri[, pregnancy_not_in_D3_cohort := fifelse(is.na(pregnancy_id) & type_of_pregnancy_end=="LB", 1, 0)] # to be adapted
 
 # Clean dataset
 D3_sel_cri <- unique(D3_sel_cri[, .(person_id, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd,
@@ -41,7 +44,7 @@ D3_sel_cri <- unique(D3_sel_cri[, .(person_id, sex_or_birth_date_is_not_defined,
 
 smart_load("D3_clean_spells", dirtemp)
 
-D3_clean_spells <- unique(D3_clean_spells[, .(person_id, entry_spell_category, exit_spell_category, starts_after_ending,
+D3_clean_spells <- unique(D3_clean_spells[, .(person_id, entry_spell_category, exit_spell_category, starts_after_ending,less_than_x_days_or_not_starts_at_birth,starts_at_birth,
                                        no_overlap_study_period,
                                        is_the_study_spell)])
 
@@ -65,11 +68,20 @@ D3_clean_spells[, c("no_overlap_study_period", "tot_no_overlap_study_period", "t
 
 # Creation of no_spell_longer_than_x_days. Keep other spells even if they are less than 365 days long
 D3_clean_spells[removed_row == 0, tot_spell_num := .N, by = person_id]
-D3_clean_spells[removed_row == 0, tot_x_days := sum(less_than_x_days_and_not_starts_at_birth), by = person_id]
-D3_clean_spells[removed_row == 0, no_spell_longer_than_x_days := fifelse(tot_x_days == tot_spell_num, 1, 0)]
+D3_clean_spells[removed_row == 0, tot_x_days := sum(less_than_x_days_or_not_starts_at_birth), by = person_id]
+D3_clean_spells[removed_row == 0, no_spell_longer_than_x_days_or_not_at_birth := fifelse(tot_x_days == tot_spell_num, 1, 0)]
 D3_clean_spells[removed_row == 0, removed_row := rowSums(.SD),
-                .SDcols = c("removed_row", "less_than_x_days_and_not_starts_at_birth")]
-D3_clean_spells[, c("less_than_x_days_and_not_starts_at_birth", "tot_x_days", "tot_spell_num") := NULL]
+                .SDcols = c("removed_row", "less_than_x_days_or_not_starts_at_birth")]
+D3_clean_spells[, c("less_than_x_days_or_not_starts_at_birth", "tot_x_days", "tot_spell_num") := NULL]
+
+
+# # Creation of all_spells_start_at_birth criteria
+# D3_clean_spells[, tot_spell_num := .N, by = person_id]
+# D3_clean_spells[, tot_starts_at_birth := sum(starts_at_birth), by = person_id]
+# D3_clean_spells[, all_spells_start_at_birth := fifelse(tot_starts_at_birth == tot_spell_num, 1, 0)]
+# D3_clean_spells[removed_row == 0, removed_row := rowSums(.SD),
+#                 .SDcols = c("removed_row", "all_spells_start_at_birth")]
+# D3_clean_spells[, c("starts_at_birth", "tot_starts_at_birth", "tot_spell_num") := NULL]
 
 # Creation of all_spells_include_vax1_but_less than_365_days_from_it
 # D3_clean_spells[removed_row == 0, tot_spell_num := .N, by = person_id]
@@ -84,6 +96,8 @@ D3_clean_spells[, c("less_than_x_days_and_not_starts_at_birth", "tot_x_days", "t
 study_spells <- D3_clean_spells[is_the_study_spell == 1, ][, .(person_id, entry_spell_category, exit_spell_category)]
 study_spells <- unique(study_spells)
 D3_sel_cri_temp<-merge(study_spells,D3_sel_cri,all.y = T,by="person_id")
+
+#se  entry spell è na vuol dire che lo spell non era alla nascita
 
 # Keep only one row for each spell which syntethize the previously defined exclusion criteria
 D3_clean_spells <- unique(D3_clean_spells[, c("entry_spell_category", "exit_spell_category",

@@ -1,13 +1,17 @@
-# we need to create two groups of meanings: one referring to hospitals HOSP (excluding emergency care) and one referring to primary care PC
+# we need to create several groups of meanings: one referring to hospitals HOSP (excluding emergency care), one referring to primary care PC, etc
 
-meanings_of_this_study<-vector(mode="list")
+meanings_of_this_study <- vector(mode="list")
+
 meanings_of_this_study[["HOSP"]]=c("hospitalisation_primary","hospitalisation_secondary","hospital_diagnosis","hopitalisation_diagnosis_unspecified","episode_primary_diagnosis","episode_secondary_diagnosis","diagnosis_procedure","hospitalisation_associated","hospitalisation_linked","HH","NH","hospitalisation_ICU_primary","hospitalisation_ICU_secondary","hospitalisation_ICU_unspecified")
 meanings_of_this_study[["PC"]]=c("primary_care_event","primary_care_diagnosis","primary_care_events_BIFAP","primary_care_antecedents_BIFAP","primary_care_condicionants_BIFAP")
+meanings_of_this_study[["SPECIALIST"]] = c("specialist_diagnosis","outpatient_hospital_planned_primary","outpatient_hospital_planned_secondary","outpatient_contact_primary","outpatient_contact_secondary")
+meanings_of_this_study[["LONGTERM"]] = c("exemption","long_term_diagnosis")
 
-# create two conditions on the meaning_of_event variable, associated to HOSP and to PC as listed above
+# create two conditions on the meaning_of_event variable, associated to HOSP, to PC... as listed above
+
 
 condmeaning <- list()
-for (level1 in c("HOSP","PC")) {
+for (level1 in c("HOSP","PC","SPECIALIST","LONGTERM")) {
   for (meaning in meanings_of_this_study[[level1]]) {
     if (length(condmeaning[[level1]])==0) {condmeaning[[level1]]=paste0("meaning_renamed == '",meanings_of_this_study[[level1]][[1]],"'")
     }else{
@@ -16,7 +20,7 @@ for (level1 in c("HOSP","PC")) {
   }
 }
 
-#----------------------------
+# #----------------------------
 # # SECONDARY COMPONENTS
 # 
 # # SECCOMPONENTS <- c("ArterialNoTP", "ArterialTP", "VTENoTP", "VTETP", "ArterialVTENoTP", "ArterialVTETP", "CVSTNoTP", "CVSTTP")
@@ -75,7 +79,7 @@ for (level1 in c("HOSP","PC")) {
 # # XXXX
 # concept_set_seccomp[["XXXX"]][['A']] <- c()
 # rule_seccomp[["XXXX"]] <- ""
-# 
+
 # # DATASOURCE-SPECIFIC ALGORITHMS
 # 
 # datasources_with_specific_algorithms <- c('GePaRD')
@@ -101,9 +105,9 @@ for (level1 in c("HOSP","PC")) {
 #     selection_meanings_from_OUTCOME[[thisdatasource]][[OUTCOME]] <- select
 #   }
 # }
-# 
-# # concept sets specific for datasources
-# 
+
+# concept sets specific for datasources
+
 # if (thisdatasource == 'ARS'){
 #   #concept_set_codes_our_study_pre[["COVID_narrow"]][["ICD9"]] <- c(concept_set_codes_our_study_pre[["COVID_narrow"]][["ICD9"]],'043','48041','51891','51971')
 #   concept_set_codes_our_study_pre[["ARD_narrow"]][["ICD9"]] <- c(concept_set_codes_our_study_pre[["ARD_narrow"]][["ICD9"]],'5189')
@@ -112,7 +116,7 @@ for (level1 in c("HOSP","PC")) {
 #-------------------------------------
 # set concept sets
 
-# concept_set_codes_our_study <- concept_set_codes_our_study_pre
+#concept_set_codes_our_study <- concept_set_codes_our_study_pre
 # concept_set_codes_our_study_excl <- concept_set_codes_our_study_pre_excl
 
 # # augment ICPC codes
@@ -151,14 +155,14 @@ for (conceptset in concept_sets_of_our_study){
 # fix for ICD9CM
 for (conceptset in concept_sets_of_our_study){
   if (concept_set_domains[[conceptset]] == "Diagnosis"){
-    concept_set_codes_our_study[[conceptset]][["ICD9CM"]] <- concept_set_codes_our_study[[conceptset]][["ICD9"]]
+    concept_set_codes_our_study[[conceptset]][["ICD9"]] <- concept_set_codes_our_study[[conceptset]][["ICD9CM"]]
   }
 }
 
 
-save(concept_set_codes_our_study,file=paste0(direxp,"concept_set_codes_our_study.RData"))
-#save(concept_set_codes_our_study_excl,file=paste0(direxp,"concept_set_codes_our_study_excl.RData"))
-save(concept_set_codes_our_study,file=paste0(dirsmallcountsremoved,"concept_set_codes_our_study.RData"))
-#save(concept_set_codes_our_study_excl,file=paste0(dirsmallcountsremoved,"concept_set_codes_our_study_excl.RData"))
+save(concept_set_codes_our_study,file = paste0(direxp, "concept_set_codes_our_study.RData"))
+# save(concept_set_codes_our_study_excl,file=paste0(direxp,"concept_set_codes_our_study_excl.RData"))
+save(concept_set_codes_our_study,file = paste0(dirsmallcountsremoved, "concept_set_codes_our_study.RData"))
+# save(concept_set_codes_our_study_excl,file=paste0(dirsmallcountsremoved,"concept_set_codes_our_study_excl.RData"))
 
-
+rm(conceptset, level1, meaning)

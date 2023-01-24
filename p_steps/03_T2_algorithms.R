@@ -1,6 +1,14 @@
 
-#Construct the algorithms
+#list of DPs per algorithm
+DAPS_alg1<-c("THL","RHE","FERR","UOSL","ARS")
+DAPS_alg2<-c("THL","ARS")
+DAPS_alg3<-c()
+DAPS_alg4<-c("EFEMERIS","POMME","RHE","FERR","UOSL","SAIL","ARS")
+
+
 smart_load("D4_study_population", diroutput)
+D4_study_population <- unique(D4_study_population[, .(person_id, study_entry_date,
+                                                      study_exit_date)])
 
 #ADHD
 #Algorithm 1: One specialist code for ADHD identified in the data source
@@ -14,20 +22,58 @@ smart_load("D4_study_population", diroutput)
 # -hospitalisation
 
 
-load(paste0(dirconceptsets,"ADHD.RData"))
-
-
-ADHD_ALG1 <- MergeFilterAndCollapse(
-  listdatasetL= list(ADHD),
-  condition = "date>=study_start & date<=study_end & meaning_renamed=='outpatient_hospital_visit' | meaning_renamed=='hospital_diagnosis' | meaning_renamed=='hospitalisation'",
-  key = c("person_id"),
-  datasetS = D4_study_population[,.(person_id)],
-  # saveintermediatedataset = T,
-  # nameintermediatedataset = paste0(dirtemp,'tempfile'),
-  sorting = c("person_id","date"),
-  strata = c("person_id"),
-  summarystat = list(list(c("count"),"codvar","number_of_diagnosis"),list(c("first"),"date","first_diagnosis"),list(c("second"),"date","second_diagnosis"),list(c("third"),"date","third_diagnosis"))
-)
+if (thisdatasource %in% DAPS_alg1) {
+  load(paste0(dirconceptsets,"ADHD.RData"))
+  
+  #  condition = "date>=study_start & date<=study_end & meaning_renamed=='outpatient_hospital_visit' | meaning_renamed=='hospital_diagnosis' | meaning_renamed=='hospitalisation'",
+  
+  ADHD_ALG1 <- MergeFilterAndCollapse(
+    listdatasetL= list(ADHD),
+    condition = paste0("(date>=study_start & date<=study_end ) & (",condmeaning[["HOSP"]]," | ",condmeaning[["SPECIALIST"]] ," | " ,condmeaning[["LONGTERM"]]," )"),
+    key = c("person_id"),
+    datasetS = D4_study_population[,.(person_id)],
+    # saveintermediatedataset = T,
+    # nameintermediatedataset = paste0(dirtemp,'tempfile'),
+    sorting = c("person_id","date"),
+    strata = c("person_id"),
+    summarystat = list(list(c("first"),"date","first_diagnosis"))
+  )
+  
+  load(paste0(dirconceptsets,"ASD.RData"))
+  
+  #  condition = "date>=study_start & date<=study_end & meaning_renamed=='outpatient_hospital_visit' | meaning_renamed=='hospital_diagnosis' | meaning_renamed=='hospitalisation'",
+  
+  ASD_ALG1 <- MergeFilterAndCollapse(
+    listdatasetL= list( ASD),
+    condition = paste0("(date>=study_start & date<=study_end ) & (",condmeaning[["HOSP"]]," | ",condmeaning[["SPECIALIST"]] ," | " ,condmeaning[["LONGTERM"]]," )"),
+    key = c("person_id"),
+    datasetS = D4_study_population[,.(person_id)],
+    # saveintermediatedataset = T,
+    # nameintermediatedataset = paste0(dirtemp,'tempfile'),
+    sorting = c("person_id","date"),
+    strata = c("person_id"),
+    summarystat = list(list(c("first"),"date","first_diagnosis"))
+  )
+  
+  
+  load(paste0(dirconceptsets,"ID.RData"))
+  
+  #  condition = "date>=study_start & date<=study_end & meaning_renamed=='outpatient_hospital_visit' | meaning_renamed=='hospital_diagnosis' | meaning_renamed=='hospitalisation'",
+  
+  ID_ALG1 <- MergeFilterAndCollapse(
+    listdatasetL= list( ID),
+    condition = paste0("(date>=study_start & date<=study_end ) & (",condmeaning[["HOSP"]]," | ",condmeaning[["SPECIALIST"]] ," | " ,condmeaning[["LONGTERM"]]," )"),
+    key = c("person_id"),
+    datasetS = D4_study_population[,.(person_id)],
+    # saveintermediatedataset = T,
+    # nameintermediatedataset = paste0(dirtemp,'tempfile'),
+    sorting = c("person_id","date"),
+    strata = c("person_id"),
+    summarystat = list(list(c("first"),"date","first_diagnosis"))
+  )
+}
+  
+  
 
 
 #---------------------------------------
@@ -38,17 +84,44 @@ ADHD_ALG1 <- MergeFilterAndCollapse(
 #for example:
 #-primary_care
 
-ADHD_ALG2 <- MergeFilterAndCollapse(
-  listdatasetL= list(ADHD),
-  condition = "date>=study_start & date<=study_end & meaning_renamed=='primary_care'",
-  key = c("person_id"),
-  datasetS = D4_study_population[,.(person_id)],
-  # saveintermediatedataset = T,
-  # nameintermediatedataset = paste0(dirtemp,'tempfile'),
-  sorting = c("person_id","date"),
-  strata = c("person_id"),
-  summarystat = list(list(c("first"),"date","first_diagnosis"),list(c("second"),"date","second_diagnosis"))
-)
+if (thisdatasource %in% DAPS_alg2) {
+
+  ADHD_ALG2 <- MergeFilterAndCollapse(
+    listdatasetL= list(ADHD),
+    paste0("(date>=study_start & date<=study_end ) & (",condmeaning[["PC"]]," )"),
+    key = c("person_id"),
+    datasetS = D4_study_population[,.(person_id)],
+    # saveintermediatedataset = T,
+    # nameintermediatedataset = paste0(dirtemp,'tempfile'),
+    sorting = c("person_id","date"),
+    strata = c("person_id"),
+    summarystat = list(list(c("first"),"date","first_diagnosis"),list(c("second"),"date","second_diagnosis"))
+  )
+  
+  ASD_ALG2 <- MergeFilterAndCollapse(
+    listdatasetL= list(ASD),
+    paste0("(date>=study_start & date<=study_end ) & (",condmeaning[["PC"]]," )"),
+    key = c("person_id"),
+    datasetS = D4_study_population[,.(person_id)],
+    # saveintermediatedataset = T,
+    # nameintermediatedataset = paste0(dirtemp,'tempfile'),
+    sorting = c("person_id","date"),
+    strata = c("person_id"),
+    summarystat = list(list(c("first"),"date","first_diagnosis"),list(c("second"),"date","second_diagnosis"))
+  )
+  
+  ID_ALG2 <- MergeFilterAndCollapse(
+    listdatasetL= list(ID),
+    paste0("(date>=study_start & date<=study_end ) & (",condmeaning[["PC"]]," )"),
+    key = c("person_id"),
+    datasetS = D4_study_population[,.(person_id)],
+    # saveintermediatedataset = T,
+    # nameintermediatedataset = paste0(dirtemp,'tempfile'),
+    sorting = c("person_id","date"),
+    strata = c("person_id"),
+    summarystat = list(list(c("first"),"date","first_diagnosis"),list(c("second"),"date","second_diagnosis"))
+  )
+}
 
 ADHD_ALG2[,time_btw_1_2_diagnosis:=difftime(second_diagnosis,first_diagnosis,units = "days")]
 
@@ -59,7 +132,8 @@ ADHD_ALG2<-ADHD_ALG2[time_btw_1_2_diagnosis>=28 & time_btw_1_2_diagnosis<=548,]
 #---------------------------------------
 #Algorithm 3: One non-specialist code and 1 at least dispensing/prescription for ADHD medication within a year of diagnosis
 # Index date: The later of either the non-specialist code or medication dispensing; any diagnosis with an explicit qualifier of “ruled out,” “suspected,” or “family history” should not be considered.
-
+if (thisdatasource %in% DAPS_alg3) {
+  
 ADHD_ALG3 <- MergeFilterAndCollapse(
   listdatasetL= list(ADHD),
   condition = "date>=study_start & date<=study_end & meaning_renamed=='primary_care'",
@@ -75,29 +149,32 @@ ADHD_ALG3 <- MergeFilterAndCollapse(
 load(paste0(dirconceptsets,"ADHD_DRUGS.RData"))
 ADHD_ALG3<-merge(ADHD_ALG3, unique(ADHD_DRUGS[,.(person_id,date)]), by="person_id", all.x=T)
 ADHD_ALG3[diagnosis_date<=date & date<=diagnosis_date+365,]
-
+}
 
 #---------------------------------------
 #Algorithm 4: One specialist dispensing/prescription for ADHD medication. 
 #Index date: Date of the first prescription / medication dispensing. 
 
-print(table(ADHD_DRUGS$codvar))
-
-if (nrow(ADHD_DRUGS)>0){
-  ADHD_ALG4 <- MergeFilterAndCollapse(
-    listdatasetL= list(ADHD_DRUGS),
-    condition = "date>=study_start & date<=study_end ",
-    key = c("person_id"),
-    datasetS = D4_study_population[,.(person_id)],
-    # saveintermediatedataset = T,
-    # nameintermediatedataset = paste0(dirtemp,'tempfile'),
-    sorting = c("person_id","date"),
-    strata = c("person_id"),
-    summarystat = list(list(c("exist"),"date","medication_date"))
-  )
+if (thisdatasource %in% DAPS_alg4) {
+  print(table(ADHD_DRUGS$codvar))
+  
+  if (nrow(ADHD_DRUGS)>0){
+    ADHD_ALG4 <- MergeFilterAndCollapse(
+      listdatasetL= list(ADHD_DRUGS),
+      condition = "date>=study_start & date<=study_end ",
+      key = c("person_id"),
+      datasetS = D4_study_population[,.(person_id)],
+      # saveintermediatedataset = T,
+      # nameintermediatedataset = paste0(dirtemp,'tempfile'),
+      sorting = c("person_id","date"),
+      strata = c("person_id"),
+      summarystat = list(list(c("exist"),"date","medication_date"))
+    )
+    
+  }
+  
+  print(paste0(nrow(ADHD_ALG4)," children with at least one drug dispensing/prescription of one of the drugs in the ADHD codelist were identified"))
   
 }
-
-print(paste0(nrow(ADHD_ALG4)," children with at least one drug dispensing/prescription of one of the drugs in the ADHD codelist were identified"))
 
 #& prescriber_speciality!='GP'
