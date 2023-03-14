@@ -4,11 +4,9 @@
 # authors: Rosa Gini, Claudia Bartolini, Olga Paoletti, Davide Messina, Giorgio Limoncella
 # based on previous scripts 
 
-# v 2.0 - 25 September 2022
-# Improve of the scriptbased on CVM script 
 
-# v 1.0 - 27 June 2022
-# Initial release
+# v 1.0 - 13 March 2023
+# Pre release
 
 rm(list=ls(all.names=TRUE))
 
