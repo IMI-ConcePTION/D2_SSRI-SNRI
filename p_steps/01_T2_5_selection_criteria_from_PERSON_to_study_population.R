@@ -6,9 +6,9 @@
 
 print('CREATE EXCLUSION CRITERIA FOR STUDY POPULATION')
 
-smart_load("D3_PERSONS", dirtemp)
+smart_load("D3_PERSONS", dirtemp,extension=extension)
 load(paste0(dirpregnancyinput,"D3_pregnancy_final.RData"))
-load(paste0(dirpregnancyinput,"D3_survey_and_visit_ids.RData"))
+#load(paste0(dirpregnancyinput,"D3_survey_and_visit_ids.RData"))
 PERSON_RELATIONSHIP<-fread(paste0(dirinput,"PERSON_RELATIONSHIPS.csv"))
 
 ### Create the criteria based on D3_PERSONS. They are the same for adults and children populations.
@@ -31,18 +31,25 @@ D3_sel_cri[, not_children := fifelse(age>=18 , 1, 0)]
 
 
 # Remove children not_linked_to_person_relationship (mother is in related_id)
-D3_sel_cri<-merge(D3_sel_cri,PERSON_RELATIONSHIP[,.(person_id,related_id)], by="person_id", all.x = T)
-D3_sel_cri[, not_linked_to_person_relationship := fifelse(is.na(related_id), 1, 0)]
+if(thisdatasource!="THL") {
+  D3_sel_cri<-merge(D3_sel_cri,PERSON_RELATIONSHIP[,.(person_id,related_id)], by="person_id", all.x = T)
+  D3_sel_cri[, not_linked_to_person_relationship := fifelse(is.na(related_id), 1, 0)]
+}else{
+  D3_sel_cri<-merge(D3_sel_cri,PERSON_RELATIONSHIP[,.(person_id,related_id)], by.x="person_id", by.y="related_id", all.x = T)
+  D3_sel_cri[, not_linked_to_person_relationship := fifelse(is.na(person_id), 1, 0)]
+}
+  
+
 
 # Remove children pregnancy_not_in_D3_cohort or not LB
 D3_sel_cri<-merge(D3_sel_cri,D3_pregnancy_final[,.(person_id,pregnancy_id,type_of_pregnancy_end)], by.y="person_id",by.x="related_id", all.x = T)
 D3_sel_cri[, pregnancy_not_in_D3_cohort := fifelse(is.na(pregnancy_id) & type_of_pregnancy_end=="LB", 1, 0)] # to be adapted
 
 # Clean dataset
-D3_sel_cri <- unique(D3_sel_cri[, .(person_id, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd,
+D3_sel_cri <- unique(D3_sel_cri[, .(person_id,sex_at_instance_creation,birth_date, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd,
                              not_children, not_linked_to_person_relationship,pregnancy_not_in_D3_cohort)])
 
-smart_load("D3_clean_spells", dirtemp)
+smart_load("D3_clean_spells", dirtemp,extension=extension)
 
 D3_clean_spells <- unique(D3_clean_spells[, .(person_id, entry_spell_category, exit_spell_category, starts_after_ending,less_than_x_days_or_not_starts_at_birth,starts_at_birth,
                                        no_overlap_study_period,
@@ -136,4 +143,4 @@ D3_sel_cri_spells[, c("entry_spell_category", "exit_spell_category") := NULL]
 
 D3_sel_cri_spells<-unique(D3_sel_cri_spells)
 # Saving exclusion criteria for populations
-smart_save(D3_sel_cri_spells, dirtemp, override_name = "D3_selection_criteria_from_PERSONS_to_study_population")
+smart_save(D3_sel_cri_spells, dirtemp, override_name = "D3_selection_criteria_from_PERSONS_to_study_population",extension=extension)
