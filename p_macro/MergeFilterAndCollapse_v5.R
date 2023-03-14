@@ -60,8 +60,8 @@ MergeFilterAndCollapse <- function(listdatasetL,datasetS,key,condition,
     
     if (typemerge == 1 ) {
       if (!missing(condition)) {
-        tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all.y = T)[(eval(parse(text = condition))),]}
-      else {tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all.y = T)}}
+        tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all.y = T,allow.cartesian = TRUE)[(eval(parse(text = condition))),]}
+      else {tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all.y = T,allow.cartesian = TRUE)}}
     else{if (!missing(condition)) {
       tmp <- tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all = T,allow.cartesian = TRUE)
       tmp <- tmp[(eval(parse(text = condition))),] }

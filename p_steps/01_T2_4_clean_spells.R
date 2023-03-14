@@ -4,8 +4,8 @@
 # output: D3_clean_spells
 
 # Load datasets
-smart_load("D3_PERSONS", dirtemp)
-smart_load("D3_output_spells_category", dirtemp)
+smart_load("D3_PERSONS", dirtemp,extension=extension)
+smart_load("D3_output_spells_category", dirtemp,extension=extension)
 
 # Combine persons and spells, then select only the column we need and create new ones
 person_spell <- merge(D3_output_spells_category, D3_PERSONS, all.x = T, by = "person_id")
@@ -65,4 +65,4 @@ person_spell<-unique(person_spell)
 
 ##add criteria to evaluate lookback 
 
-smart_save(person_spell, dirtemp, override_name = "D3_clean_spells")
+smart_save(person_spell, dirtemp, override_name = "D3_clean_spells",extension=extension)

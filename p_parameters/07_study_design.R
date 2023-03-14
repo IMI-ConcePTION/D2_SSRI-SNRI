@@ -2,14 +2,6 @@
 # Parameters specific for each study
 #-----------------------------------
 
-#study_years_datasource
-end_date <- vector(mode = "list")
-end_date[['ARS']] <- ymd(20191231)
-
-study_end <- min(instance_creation, recommended_end_date,end_date[[thisdatasource]], na.rm = T)
-rm(recommended_end_date)
-
-
 #----------------------------
 # admissible gap between observation periods (DAP-specific)
 admissible_gap_obs_periods <- vector(mode = "list")
@@ -25,21 +17,24 @@ gap_days <- ifelse(thisdatasource %not in% names(admissible_gap_obs_periods),
 min_spell_lenght <- 28
 
 # define from when the data is valid
-recommended_start_date <- vector(mode = "list")
-recommended_start_date[['ARS']] <- ymd(20030101)
-recommended_start_date[['TEST']] <- ymd(20030101)
-recommended_start_date[['SAIL']] <- ymd(20050101)
-recommended_start_date[['THL']] <- ymd(19960101)
-recommended_start_date[['EFEMERIS']] <- ymd(20040101)
-recommended_start_date[['POMME']] <- ymd(20100101)
-recommended_start_date[['ER']] <- ymd(20100101)
-recommended_start_date[['UOSL']] <- ymd(20050101)
+start_data_availability <- vector(mode = "list")
+start_data_availability[['ARS']] <- ymd(20030101)  #should be 2010 but for testing is 2003
+start_data_availability[['TEST']] <- ymd(20030101)
+start_data_availability[['SAIL']] <- ymd(20000101)
+start_data_availability[['THL']] <- ymd(19960101)
+start_data_availability[['EFEMERIS']] <- ymd(20040101)
+start_data_availability[['POMME']] <- ymd(20100101) #ask anna-belle the 2 different acronym in the 2 extractions
+start_data_availability[['ER']] <- ymd(20100101)
+start_data_availability[['UOSL']] <- ymd(20080101)
 
 
+study_start <- start_data_availability[[thisdatasource]]
+rm(start_data_availability)
 
-# recommended_start_date <- fifelse(thisdatasource %not in% names(recommended_start_date_vect),
-#                                   ymd(19960101), recommended_start_date_vect[[thisdatasource]])
-#rm(recommended_start_date_vect)
+#end of data availability
+end_data_availability <- vector(mode = "list")
+end_data_availability[['ARS']] <- ymd(20191231)
+end_data_availability[['SAIL']] <- ymd(20201231)
 
-
-study_start <- recommended_start_date[[thisdatasource]]
+study_end <- end_data_availability[[thisdatasource]]
+rm(end_data_availability)

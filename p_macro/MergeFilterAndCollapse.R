@@ -1,6 +1,10 @@
 
 #' 'MergeFilterAndCollapse'
-#' 
+#'
+#'
+#' version 7: addition of the allow.cartesian in the typemerge 1
+#' version 6: addition of the summary statistics "third"
+#' version 5: revision of the key parameter
 #'
 #'The function MergeFilterAndCollapse performs the merge between a dataset with one row per unit of observation and a dataset with multiple rows while filtering by a condition. Furthermore it is possibile to collapse and compute summary statistics across strata of a categorical variable.
 #'
@@ -8,12 +12,12 @@
 #' @param datasetS (optional) a data.table() dataset, containing one record per -key-
 #' @param key a vector containing the name(s) of the column(s) identifying the units of observations in -listdatasetL- and in -datasetS-. If the units of observations are identified by variables with the same name, the name can be listed just once, otherwise list first the name in -listdatasetL- and second the name in -datasetS-.
 #' @param condition (optional) a string containing a condition on the rows of the product between -datasetS- and-datasetL-. Only rows of the product that comply with the condition will be further processed by the function.
-#' @param typemerge (optional) a dichotomous parameter: 1 (default) indicates a one-to-many merge, 2 a many-to-many merge. 
+#' @param typemerge (optional) a dichotomous parameter: 1 (default) indicates a one-to-many merge, 2 a many-to-many merge.
 #' @param saveintermediatedataset (optional) a logical parameter, by default set to FALSE. If it is TRUE the intermediate dataset obtained after -listdatasetL- is merged with -datasetS- and filtered with -condition- will be saved. If -additionalvar-is specified, the intermediate dataset will also contain the new variables. If -nameintermediatedataset- is not specified, the intermedate dataset is saved in the working directory with name 'intermediatedataset'.
 #' @param nameintermediatedataset (optional) a string specifying the namefile of the intermediate dataset  (path is comprised in the name,if any).
 #' @param additionalvar (optional) a  list of lists containing additional variables to be created on the merged dataset before computing summary statistics. Each list is made up of three parts: the first is the name to give to the new variable, the second is the content of the variable, and the third is an optional condition filtering the rows to fill.
 #' @param sorting (optional) a vector containing the variable(s) the dataset must be sorted by before computing summary statistics
-#' @param strata a vector of column name(s) of -datasetS- or/and -datasetL-  and/or -additionalvar- across which the dataset is collapsed. 
+#' @param strata a vector of column name(s) of -datasetS- or/and -datasetL-  and/or -additionalvar- across which the dataset is collapsed.
 #' @param summarystat a list of lists each one containing three elements: first a summary statistic to be computed (values allowed are:  mean, min, max, sd, mode, first, second, secondlast, last, exist, sum, count), on which variable to computed it and optionally, as third element with the new name to give to the new variable.
 #' @details
 #'
@@ -28,10 +32,10 @@
 MergeFilterAndCollapse <- function(listdatasetL,datasetS,key,condition,
                                    saveintermediatedataset=F,nameintermediatedataset,
                                    additionalvar,sorting,strata,summarystat,typemerge=1){
-  
+
   if (!require("data.table")) install.packages("data.table")
   library(data.table)
-  
+
   if (length(listdatasetL) == 1) {
     datasetL <- listdatasetL[[1]]
   }else{
@@ -57,23 +61,23 @@ MergeFilterAndCollapse <- function(listdatasetL,datasetS,key,condition,
       key.x = c(key[1],commoncol)
       key.y = c(key[2],commoncol)
     }
-    
+
     if (typemerge == 1 ) {
       if (!missing(condition)) {
-        tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all.y = T)[(eval(parse(text = condition))),]}
-      else {tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all.y = T)}}
+        tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all.y = T,allow.cartesian = TRUE)[(eval(parse(text = condition))),]}
+      else {tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all.y = T,allow.cartesian = TRUE)}}
     else{if (!missing(condition)) {
       tmp <- tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y,all = T,allow.cartesian = TRUE)
       tmp <- tmp[(eval(parse(text = condition))),] }
       else {tmp <- merge(datasetL,datasetS,by.x = key.x,by.y = key.y, all = T,allow.cartesian = TRUE)}
     }
   }
-  
-  
+
+
   if (!missing(sorting)) {
     setkeyv(tmp,sorting)
   }
-  
+
   if (!missing(additionalvar)) {
     for (elem in additionalvar) {
       if(length(elem)==3) {
@@ -83,19 +87,19 @@ MergeFilterAndCollapse <- function(listdatasetL,datasetS,key,condition,
       }
     }
   }
-  
-  
+
+
   if (saveintermediatedataset==T) {
     if (missing(nameintermediatedataset)) {
-    assign("intermediatedataset",tmp)
+      assign("intermediatedataset",tmp)
       pathnameintermediatedataset<-paste0(getwd(),"/intermediatedataset")
-      save(intermediatedataset, file=paste0(pathnameintermediatedataset,".RData")) 
+      save(intermediatedataset, file=paste0(pathnameintermediatedataset,".RData"))
 
-    }else{ 
-    assign(sapply(strsplit(nameintermediatedataset, "/"), tail, 1),tmp)
-     save(list=sapply(strsplit(nameintermediatedataset, "/"), tail, 1), file=paste0(nameintermediatedataset,".RData")) }
+    }else{
+      assign(sapply(strsplit(nameintermediatedataset, "/"), tail, 1),tmp)
+      save(list=sapply(strsplit(nameintermediatedataset, "/"), tail, 1), file=paste0(nameintermediatedataset,".RData")) }
   }
-  
+
   nameSTAT2 <- vector()
   for (elem in summarystat) {
     elem[[1]] <- tolower(elem[[1]])
@@ -162,7 +166,7 @@ MergeFilterAndCollapse <- function(listdatasetL,datasetS,key,condition,
     if ("min" %in% elem[[1]]) {
       if (length(elem)==3) { tmp[!is.finite(eval(parse(text = paste0(elem[3])))), assign(paste0(elem[3]),NA)] }
       else{ tmp[!is.finite(eval(parse(text = paste0("min_",elem[2])))), assign(paste0("min_",elem[2]),NA)] }
-     }
+    }
     if ("max" %in% elem[[1]]) {
       if (length(elem)==3) { tmp[!is.finite(eval(parse(text = paste0(elem[3])))), assign(paste0(elem[3]),NA)] }
       else{ tmp[!is.finite(eval(parse(text = paste0("max_",elem[2])))), assign(paste0("max_",elem[2]),NA)] }
