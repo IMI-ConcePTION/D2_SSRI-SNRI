@@ -9,7 +9,8 @@ print('CREATE EXCLUSION CRITERIA FOR STUDY POPULATION')
 smart_load("D3_PERSONS", dirtemp,extension=extension)
 load(paste0(dirpregnancyinput,"D3_pregnancy_final.RData"))
 #load(paste0(dirpregnancyinput,"D3_survey_and_visit_ids.RData"))
-PERSON_RELATIONSHIP<-fread(paste0(dirinput,"PERSON_RELATIONSHIPS.csv"))
+PERSON_RELATIONSHIP<-fread(paste0(dirinput,"PERSON_RELATIONSHIPS.csv"),colClasses = list(character="person_id",character="related_id"))
+
 
 ### Create the criteria based on D3_PERSONS. They are the same for adults and children populations.
 # Remove persons with sex or birth day missing (recoded to year 9999)
@@ -35,8 +36,10 @@ if(thisdatasource!="THL") {
   D3_sel_cri<-merge(D3_sel_cri,PERSON_RELATIONSHIP[,.(person_id,related_id)], by="person_id", all.x = T)
   D3_sel_cri[, not_linked_to_person_relationship := fifelse(is.na(related_id), 1, 0)]
 }else{
-  D3_sel_cri<-merge(D3_sel_cri,PERSON_RELATIONSHIP[,.(person_id,related_id)], by.x="person_id", by.y="related_id", all.x = T)
-  D3_sel_cri[, not_linked_to_person_relationship := fifelse(is.na(person_id), 1, 0)]
+  setnames(PERSON_RELATIONSHIP,"person_id","mother_id")
+  setnames(PERSON_RELATIONSHIP,"related_id","child_id")
+  D3_sel_cri<-merge(D3_sel_cri,PERSON_RELATIONSHIP[,.(mother_id,child_id)], by.x="person_id", by.y="child_id", all.x = T)
+  D3_sel_cri[, not_linked_to_person_relationship := fifelse(is.na(mother_id), 1, 0)]
 }
   
 
