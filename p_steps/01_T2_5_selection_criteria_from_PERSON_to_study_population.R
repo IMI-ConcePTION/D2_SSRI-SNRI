@@ -11,7 +11,6 @@ load(paste0(dirpregnancyinput,"D3_pregnancy_final.RData"))
 #load(paste0(dirpregnancyinput,"D3_survey_and_visit_ids.RData"))
 PERSON_RELATIONSHIP<-fread(paste0(dirinput,"PERSON_RELATIONSHIPS.csv"),colClasses = list(character="person_id",character="related_id"))
 
-#only for THL swap columns names related_id and person_id
 if(thisdatasource=="THL") {
   PERSON_RELATIONSHIP[, c("related_id", "person_id") := .(person_id, related_id)]
 }
@@ -31,27 +30,41 @@ D3_sel_cri[, birth_date_absurd := fifelse(year(birth_date) < 1900 & birth_date >
 D3_sel_cri[, age := age_fast(birth_date,study_start)]
 D3_sel_cri[, not_children := fifelse(age>=18 , 1, 0)]
 
+# D3_sel_cri[, age_study_end := difftime(birth_date,study_end,units = "days")]
+# D3_sel_cri[, too_young_at_study_end := fifelse(age_study_end<=180 & age_study_end>=0, 1, 0)]
 
 
-# Remove children without mother in PERSON_RELATIONSHIP (mother is in related_id)
+# Remove children not_linked_to_person_relationship (mother is in related_id)
+#if(thisdatasource!="THL") {
 
-D3_sel_cri<-merge(D3_sel_cri,unique(PERSON_RELATIONSHIP[,.(person_id,related_id)]), by="person_id", all.x = T)
-D3_sel_cri[, not_linked_to_person_relationship_tmp := fifelse(is.na(related_id), 1, 0)]
+  D3_sel_cri<-merge(D3_sel_cri,unique(PERSON_RELATIONSHIP[,.(person_id,related_id,meaning_of_relationship)]), by="person_id", all.x = T)
+  D3_sel_cri[, not_linked_to_person_relationship_tmp := fifelse(!is.na(related_id) & meaning_of_relationship=="birth_mother" , 0, 1)]
+  D3_sel_cri[, not_linked_to_person_relationship :=min(not_linked_to_person_relationship_tmp,na.rm = T),by="person_id"]
 
-#do the minimum because each children has many rows at this point
-D3_sel_cri[, not_linked_to_person_relationship :=min(not_linked_to_person_relationship_tmp,na.rm = T),by="person_id"]
+# }else{
+#   setnames(PERSON_RELATIONSHIP,"person_id","mother_id")
+#   setnames(PERSON_RELATIONSHIP,"related_id","child_id")
+#   D3_sel_cri<-merge(D3_sel_cri,unique(PERSON_RELATIONSHIP[,.(mother_id,child_id)]), by.x="person_id", by.y="child_id", all.x = T)
+#   D3_sel_cri[, not_linked_to_person_relationship_tmp := fifelse(is.na(mother_id), 1, 0)]
+#   D3_sel_cri[, not_linked_to_person_relationship :=min(not_linked_to_person_relationship_tmp,na.rm = T),by=""]
+# }
   
 
 
-# Remove children whose pregnancy is not in D3_pregnancy_final or not LB
-
-D3_sel_cri<-merge(D3_sel_cri,D3_pregnancy_final[,.(person_id,pregnancy_id,type_of_pregnancy_end,pregnancy_end_date)], by.y="person_id",by.x="related_id", all.x = T,allow.cartesian = T)
-D3_sel_cri[, pregnancy_not_in_D3_cohort_tmp := fifelse(!is.na(pregnancy_id) & type_of_pregnancy_end=="LB" & birth_date==pregnancy_end_date, 0, 1)] 
+# Remove children pregnancy_not_in_D3_cohort or not LB
+#if(thisdatasource!="THL") {
+  D3_sel_cri<-merge(D3_sel_cri,D3_pregnancy_final[,.(person_id,pregnancy_id,type_of_pregnancy_end,pregnancy_end_date)], by.y="person_id",by.x="related_id", all.x = T,allow.cartesian = T)
   
-#do the minimum because each children has many rows at this point
-D3_sel_cri[, pregnancy_not_in_D3_cohort :=min(pregnancy_not_in_D3_cohort_tmp,na.rm = T),by="person_id"]
-D3_sel_cri<-unique(D3_sel_cri[,pregnancy_not_in_D3_cohort_tmp:=NULL][,not_linked_to_person_relationship_tmp:=NULL][,related_id:=NULL][,pregnancy_id:=NULL][,type_of_pregnancy_end:=NULL][,pregnancy_end_date:=NULL])
-
+  D3_sel_cri[, pregnancy_not_in_D3_cohort_tmp := fifelse(!is.na(pregnancy_id) & type_of_pregnancy_end=="LB" & (birth_date<=pregnancy_end_date+30 & birth_date>=pregnancy_end_date-30), 0, 1)] 
+  # D3_sel_cri[, pregnancy_not_in_D3_cohort_tmp2 := fifelse(!is.na(pregnancy_id) & type_of_pregnancy_end=="LB" & birth_date==pregnancy_end_date, 0, 1)] 
+  
+  D3_sel_cri[, pregnancy_not_in_D3_cohort :=min(pregnancy_not_in_D3_cohort_tmp,na.rm = T),by="person_id"]
+  D3_sel_cri<-unique(D3_sel_cri[,pregnancy_not_in_D3_cohort_tmp:=NULL][,not_linked_to_person_relationship_tmp:=NULL][,related_id:=NULL][,pregnancy_id:=NULL][,type_of_pregnancy_end:=NULL][,pregnancy_end_date:=NULL])
+  
+# }else{
+#   D3_sel_cri<-merge(D3_sel_cri,unique(D3_pregnancy_final[,.(person_id,pregnancy_id,type_of_pregnancy_end)]), by.y="person_id",by.x="mother_id", all.x = T)
+#   D3_sel_cri[, pregnancy_not_in_D3_cohort := fifelse(!is.na(pregnancy_id) & type_of_pregnancy_end=="LB" , 0, 1)] 
+# }
 
 # Clean dataset
 D3_sel_cri <- unique(D3_sel_cri[, .(person_id,sex_at_instance_creation,birth_date, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd,

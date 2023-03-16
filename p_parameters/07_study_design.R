@@ -32,9 +32,8 @@ study_start <- start_data_availability[[thisdatasource]]
 rm(start_data_availability)
 
 #end of data availability
-end_data_availability <- vector(mode = "list")
-end_data_availability[['ARS']] <- ymd(20191231)
-end_data_availability[['SAIL']] <- ymd(20201231)
 
-study_end <- end_data_availability[[thisdatasource]]
-rm(end_data_availability)
+study_end<- ymd(20191231)
+
+if (thisdatasource=="SAIL") study_end <- ymd(20201231)
+
