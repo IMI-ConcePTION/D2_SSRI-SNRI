@@ -12,7 +12,7 @@ OUTCOME_variables<-c("ADHD","ASD","ID")
 for (outcome in OUTCOME_variables) {
   
   baseline_info1<-D4_study_population[, .(person_id,sex_at_instance_creation)]
-  baseline_info2<-D4_study_population[, .(person_id,sex_at_instance_creation)][,sex_at_instance_creation:="all"]
+  baseline_info2<-D4_study_population[, .(person_id,sex_at_instance_creation)][,sex_at_instance_creation:="Total"]
   baseline_info<-rbind(baseline_info1,baseline_info2)
   
   load(paste0(dirconceptsets,outcome,".RData"))
@@ -88,13 +88,13 @@ for (outcome in OUTCOME_variables) {
   setnames(get(paste0(outcome,"_third")),"type","type_of_diagnostic_code")
   assign(paste0(outcome,"_third"),get(paste0(outcome,"_third"))[!is.na(third_diagnosis),][,Number_of_diagnosis:="Third"][,third_diagnosis:=NULL])
   
-  print(paste0(length(unique(get(paste0(outcome,"_counts"))$person_id))," children with at least one diagnosis of ADHD were identified"))
+  print(paste0(length(unique(get(paste0(outcome,"_counts"))$person_id))," children with at least one diagnosis of ",outcome," were identified"))
   
   assign(paste0(outcome,"_diagnosis"),rbind(get(paste0(outcome,"_first")),get(paste0(outcome,"_second")),get(paste0(outcome,"_third"))))
 
   assign("baseline_info",get("baseline_info")[!is.na(Number_diagnostic_codes_detected),])
   
-  baseline_info<-merge(baseline_info,get(paste0(outcome,"_diagnosis")),all.x=T,by="person_id")
+  baseline_info<-merge(baseline_info,get(paste0(outcome,"_diagnosis")),all.x=T,by="person_id",allow.cartesian=T)
 
 
 
@@ -102,7 +102,14 @@ for (outcome in OUTCOME_variables) {
          paste0(dirtemp, "diagnostic_setting_base_",outcome,".csv"))
   
 
-  assign(paste0("D5_diagnostic_setting_",outcome),get("baseline_info")[,.N,by=c("Number_of_diagnosis","sex_at_instance_creation","type_of_diagnostic_code","Number_diagnostic_codes_detected")])
+  assign(paste0("D5_diagnostic_setting_",outcome),get("baseline_info")[,.N,by=c("Number_diagnostic_codes_detected","sex_at_instance_creation","Number_of_diagnosis","type_of_diagnostic_code")])
+  
+  preferred.order<-c("0","1","2","3+")
+  preferred.order_sex<-c("M","F","Total")
+  preferred.order_num_diagn<-c("First","Second","Third")
+  get(paste0("D5_diagnostic_setting_",outcome))[, Number_diagnostic_codes_detected := factor(Number_diagnostic_codes_detected, levels=preferred.order)][, sex_at_instance_creation := factor(sex_at_instance_creation, levels=preferred.order_sex)][, Number_of_diagnosis := factor(Number_of_diagnosis, levels=preferred.order_num_diagn)]
+  setorderv(get(paste0("D5_diagnostic_setting_",outcome)), c("Number_diagnostic_codes_detected","sex_at_instance_creation","Number_of_diagnosis"))
+  
   
   assign(paste0("D5_diagnostic_setting_",outcome), get(paste0("D5_diagnostic_setting_",outcome))[,datasource:=thisdatasource])
          

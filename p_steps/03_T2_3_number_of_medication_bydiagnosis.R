@@ -15,7 +15,7 @@ if (thisdatasource %in% DAPS_alg4) {
   load(paste0(dirconceptsets,outcome,"_DRUGS.RData"))
     
   baseline_info1<-D4_study_population[, .(person_id,sex_at_instance_creation)]
-  baseline_info2<-D4_study_population[, .(person_id,sex_at_instance_creation)][,sex_at_instance_creation:="all"]
+  baseline_info2<-D4_study_population[, .(person_id,sex_at_instance_creation)][,sex_at_instance_creation:="Total"]
   baseline_info<-rbind(baseline_info1,baseline_info2)
   
   load(paste0(dirconceptsets,outcome,".RData"))
@@ -126,6 +126,12 @@ if (thisdatasource %in% DAPS_alg4) {
   setnames(temp,"V1","N_children_with_medication")
   
   assign(paste0("D5_number_of_medication_bydiagnosis_",outcome),merge(get(paste0("D5_number_of_medication_bydiagnosis_",outcome)),temp,by=c("Number_diagnostic_codes_detected","sex_at_instance_creation" )))
+  
+  preferred.order<-c("0","1","2","3+")
+  preferred.order_sex<-c("M","F","Total")
+  get(paste0("D5_number_of_medication_bydiagnosis_",outcome))[, Number_diagnostic_codes_detected := factor(Number_diagnostic_codes_detected, levels=preferred.order)][, sex_at_instance_creation := factor(sex_at_instance_creation, levels=preferred.order_sex)]
+  setorderv(get(paste0("D5_number_of_medication_bydiagnosis_",outcome)), c("Number_diagnostic_codes_detected","sex_at_instance_creation"))
+  
   
   assign(paste0("D5_number_of_medication_bydiagnosis_",outcome), get(paste0("D5_number_of_medication_bydiagnosis_",outcome))[,datasource:=thisdatasource])
   

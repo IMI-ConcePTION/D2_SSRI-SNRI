@@ -150,13 +150,17 @@ for (outcome in OUTCOME_variables) {
   assign(paste0("algorithms_",outcome),Reduce(function(x, y) merge(x, y, all=TRUE,by="person_id"), Pattern1_list))
   assign(paste0("algorithms_",outcome),get(paste0("algorithms_",outcome))[, grep("^ALGO_|person", names( get(paste0("algorithms_",outcome)))), with = FALSE])
 
-  assign(paste0("Algorithms_",outcome),setDT(get(paste0("algorithms_",outcome)))[,list(Count=.N) ,c(grep(paste0("^ALGO"),names(get(paste0("algorithms_",outcome))),value=TRUE))])
+  assign(paste0("Algorithms_",outcome),setDT(get(paste0("algorithms_",outcome)))[,list(Count=.N) ,c(grep(paste0("^ALGO"),names(get(paste0("algorithms_",outcome))),value=TRUE))][,datasource:=thisdatasource])
 
 }
 
 Algorithms_ADHD[is.na(Algorithms_ADHD)] <- 0
 Algorithms_ASD[is.na(Algorithms_ASD)] <- 0
 Algorithms_ID[is.na(Algorithms_ID)] <- 0
+
+setorderv(Algorithms_ADHD,colnames(Algorithms_ADHD[, grep("^AL", colnames(Algorithms_ADHD)), with = FALSE]))
+setorderv(Algorithms_ASD,colnames(Algorithms_ASD[, grep("^AL", colnames(Algorithms_ASD)), with = FALSE]))
+setorderv(Algorithms_ID,colnames(Algorithms_ID[, grep("^AL", colnames(Algorithms_ID)), with = FALSE]))
 
 fwrite(Algorithms_ADHD,
        paste0(direxp, "D5_algorithms_combinations_ADHD.csv"))

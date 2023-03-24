@@ -20,8 +20,6 @@ if(thisdatasource=="THL") {
 D3_sel_cri <- D3_PERSONS[, sex_or_birth_date_is_not_defined := fifelse(
   is.na(sex_at_instance_creation) | sex_at_instance_creation == "U" | year(birth_date) == 9999, 1, 0)]
 
-# Remove persons with  partial date of death
-D3_sel_cri[, partial_date_of_death := fifelse(!is.na(death_date) & year(death_date) == 9999, 1, 0)]
 
 # Remove persons with absurd date of birth
 D3_sel_cri[, birth_date_absurd := fifelse(year(birth_date) < 1900 & birth_date > instance_creation, 1, 0)]
@@ -67,7 +65,7 @@ D3_sel_cri[, not_children := fifelse(age>=18 , 1, 0)]
 # }
 
 # Clean dataset
-D3_sel_cri <- unique(D3_sel_cri[, .(person_id,sex_at_instance_creation,birth_date, sex_or_birth_date_is_not_defined, partial_date_of_death, birth_date_absurd,
+D3_sel_cri <- unique(D3_sel_cri[, .(person_id,sex_at_instance_creation,birth_date, sex_or_birth_date_is_not_defined,  birth_date_absurd,
                              not_children, not_linked_to_person_relationship,pregnancy_not_in_D3_cohort)])
 
 smart_load("D3_clean_spells", dirtemp,extension=extension)
@@ -94,10 +92,10 @@ D3_clean_spells[removed_row == 0, no_spell_overlapping_the_study_period := fifel
 D3_clean_spells[removed_row == 0, removed_row := rowSums(.SD), .SDcols = c("removed_row", "no_overlap_study_period")]
 D3_clean_spells[, c("no_overlap_study_period", "tot_no_overlap_study_period", "tot_spell_num") := NULL]
 
-# Creation of no_spell_longer_than_x_days. Keep other spells even if they are less than 365 days long
+# Creation of no_spell_longer_than_x_days. Keep other spells even if they are less than 28  days long
 D3_clean_spells[removed_row == 0, tot_spell_num := .N, by = person_id]
 D3_clean_spells[removed_row == 0, tot_x_days := sum(less_than_x_days_or_not_starts_at_birth), by = person_id]
-D3_clean_spells[removed_row == 0, no_spell_longer_than_x_days_or_not_at_birth := fifelse(tot_x_days == tot_spell_num, 1, 0)]
+D3_clean_spells[removed_row == 0, no_spell_longer_than_28_days_or_not_at_birth := fifelse(tot_x_days == tot_spell_num, 1, 0)]
 D3_clean_spells[removed_row == 0, removed_row := rowSums(.SD),
                 .SDcols = c("removed_row", "less_than_x_days_or_not_starts_at_birth")]
 D3_clean_spells[, c("less_than_x_days_or_not_starts_at_birth", "tot_x_days", "tot_spell_num") := NULL]
@@ -158,8 +156,8 @@ D3_sel_cri_spells <- merge(D3_sel_cri_temp, D3_clean_spells,
 # 
 # D3_sel_cri_spells_vaccines <- merge(D3_sel_cri_spells, spells_vaccines, all = T, by = "person_id")
 #D3_sel_cri_spells[, study_entry_date := pmax(entry_spell_category, start_lookback)]
-D3_sel_cri_spells[, study_entry_date := pmax(entry_spell_category)]
-D3_sel_cri_spells[, study_exit_date := pmin(exit_spell_category, study_end)]
+D3_sel_cri_spells[, study_entry_date := entry_spell_category]
+D3_sel_cri_spells[, study_exit_date := pmin(exit_spell_category, study_end,na.rm=T),by="person_id"]
 D3_sel_cri_spells[, c("entry_spell_category", "exit_spell_category") := NULL]
 
 D3_sel_cri_spells<-unique(D3_sel_cri_spells)

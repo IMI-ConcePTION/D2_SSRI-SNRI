@@ -12,7 +12,7 @@ OUTCOME_variables<-c("ADHD","ASD","ID")
 for (outcome in OUTCOME_variables) {
   
   baseline_info1<-D4_study_population[, .(person_id,sex_at_instance_creation,birth_date,study_exit_date)]
-  baseline_info2<-D4_study_population[, .(person_id,sex_at_instance_creation,birth_date,study_exit_date)][,sex_at_instance_creation:="all"]
+  baseline_info2<-D4_study_population[, .(person_id,sex_at_instance_creation,birth_date,study_exit_date)][,sex_at_instance_creation:="Total"]
   baseline_info<-rbind(baseline_info1,baseline_info2)
   
   load(paste0(dirconceptsets,outcome,".RData"))
@@ -109,7 +109,15 @@ for (outcome in OUTCOME_variables) {
 
   assign(paste0("D5_number_of_diagnosis_",outcome),get("baseline_info")[,.N,by=c("Number_diagnostic_codes_detected","sex_at_instance_creation","Median_Time_in_study", "IQR_Median_Time_in_study", "Mean_Time_in_study" , "SD_Mean_Time_in_study" ,  "Median_age_at_first_diagnosis" ,"IQR_Median_age_at_first_diagnosis" , "Mean_age_at_first_diagnosis" , "SD_Mean_age_at_first_diagnosis" , "Median_time_btw_codes" , "IQR_time_btw_codes" ,"Mean_time_btw_codes" ,                     "SD_time_btw_codes"  )])
   
+  cols<-c("Median_Time_in_study", "IQR_Median_Time_in_study", "Mean_Time_in_study" , "SD_Mean_Time_in_study" ,  "Median_age_at_first_diagnosis" ,"IQR_Median_age_at_first_diagnosis" , "Mean_age_at_first_diagnosis" , "SD_Mean_age_at_first_diagnosis" , "Median_time_btw_codes" , "IQR_time_btw_codes" ,"Mean_time_btw_codes" ,                     "SD_time_btw_codes" )
+  get(paste0("D5_number_of_diagnosis_",outcome))[,(cols) := round(.SD,1), .SDcols=cols]
+  
   assign(paste0("D5_number_of_diagnosis_",outcome), get(paste0("D5_number_of_diagnosis_",outcome))[,datasource:=thisdatasource])
+  
+  preferred.order<-c("0","1","2","3+")
+  preferred.order_sex<-c("M","F","Total")
+  get(paste0("D5_number_of_diagnosis_",outcome))[, Number_diagnostic_codes_detected := factor(Number_diagnostic_codes_detected, levels=preferred.order)][, sex_at_instance_creation := factor(sex_at_instance_creation, levels=preferred.order_sex)]
+  setorderv(get(paste0("D5_number_of_diagnosis_",outcome)), c("Number_diagnostic_codes_detected","sex_at_instance_creation"))
   
   fwrite(get(paste0("D5_number_of_diagnosis_",outcome)),
          paste0(direxp, "D5_number_of_diagnosis_",outcome,".csv"))
