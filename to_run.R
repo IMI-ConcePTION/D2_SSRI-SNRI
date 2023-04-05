@@ -71,3 +71,6 @@ launch_step("p_steps/03_T2_3_number_of_medication_bydiagnosis.R")
 launch_step("p_steps/03_T2_4_algorithms.R")
 
 launch_step("p_steps/03_T3_5_compute_period_prevalence.R")
+
+
+if(thisdatasource=="EFEMERIS") launch_step("p_steps/03_T3_6_DID.R")

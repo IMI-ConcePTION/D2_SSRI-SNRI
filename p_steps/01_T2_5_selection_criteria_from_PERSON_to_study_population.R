@@ -35,7 +35,7 @@ D3_sel_cri[, not_children := fifelse(age>=18 , 1, 0)]
 #if(thisdatasource!="THL") {
 
   D3_sel_cri<-merge(D3_sel_cri,unique(PERSON_RELATIONSHIP[,.(person_id,related_id,meaning_of_relationship)]), by="person_id", all.x = T)
-  D3_sel_cri[, not_linked_to_person_relationship_tmp := fifelse(!is.na(related_id) , 0, 1)]
+  D3_sel_cri[, not_linked_to_person_relationship_tmp := fifelse(!is.na(related_id) & meaning_of_relationship=="gestational_mother" , 0, 1)]
   D3_sel_cri[, not_linked_to_person_relationship :=min(not_linked_to_person_relationship_tmp,na.rm = T),by="person_id"]
 
 # }else{
